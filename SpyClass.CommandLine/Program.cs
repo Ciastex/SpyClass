@@ -1,11 +1,8 @@
-﻿using System;
-using System.Text;
-using SpyClass.Analysis;
+﻿using SpyClass.Analysis;
 using SpyClass.Hierarchization;
-using SpyClass.Rendering;
 using SpyClass.Rendering.HtmlRendering;
 
-namespace SpyGlass.CommandLine
+namespace SpyClass.CommandLine
 {
     static class Program
     {

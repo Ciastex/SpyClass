@@ -1,11 +1,34 @@
 let prevObject = null;
 
-function navigateToTreeElement(jObject) {
+function updateClassPathWith(element) {
+    if (typeof (element) !== "object") {
+        return;
+    }
+
+    let segments = [];
+
+    while ($(element).length > 0) {
+        segments.push($(element).children("span").eq(0).text());
+        element = $(element).parent();
+    }
+
+    let pathString = segments.reverse().filter(x => x.length !== 0).join("/");
+    
+    let docTitleElement = $("#current-document");
+    $(docTitleElement).text(pathString);
+    $(docTitleElement).attr("title", pathString);
+
+}
+
+function removeOldObjectFocusState() {
     if (prevObject != null) {
         $(prevObject).removeClass("focus");
     }
+}
 
-    $(jObject).addClass("focus");
+function updateFocusStateOf(element) {
+    removeOldObjectFocusState();
+    $(element).addClass("focus");
 }
 
 function focusTreeMemberByCurrentHash() {
@@ -14,18 +37,20 @@ function focusTreeMemberByCurrentHash() {
     if (!href.includes("#")) {
         return;
     }
-    
+
     let target = href.split("#");
 
     if (target.length > 1) {
-        let element = $("li#"+target[1]);
+        let element = $("li#" + target[1]);
 
-        if (element.length == 0) {
+        if (element.length === 0) {
             throw new Error("target doc element not found");
         }
-        
+
         $(element).trigger("click");
-        navigateToTreeElement(element);
+        
+        updateFocusStateOf(element);
+        updateClassPathWith(element);
 
         prevObject = element;
 
@@ -33,30 +58,33 @@ function focusTreeMemberByCurrentHash() {
             if ($(element).attr("aria-expanded") != null) {
                 $(element).attr("aria-expanded", "true");
             }
-            
+
             element = $(element).parent();
         }
     }
 }
 
-// needs to be window.addEventListener
-// instead of $(document).ready()
-// because TreeLinks.js doesn't use jquery
-// and i need below to run after that thing
-// and i'm not touching the code i stole
 window.addEventListener('load', function () {
-    $("li[doc-file]").each(function() {
-        $(this).on("click", null, $(this).attr("doc-file"), 
-            function(ev) {
-                navigateToTreeElement(this);
-                $("#main-doc-content").load(ev.data);
+    $("#left-col").resizable({
+        handles: "e"
+    });
+    
+    $("li[doc-file]").each(function () {
+        $(this).on("click", null, $(this).attr("id"),
+            function (ev) {
+                location.hash = ev.data;
+                ev.stopPropagation();
             }
         );
     });
 
     focusTreeMemberByCurrentHash();
 
-    $(window).on("hashchange", function(ev) {
+    $(window).on("hashchange", function (_) {
+        removeOldObjectFocusState();
+        updateClassPathWith(this);
+        
+        $("#main-doc-content").load("types/" + location.hash.replace("#", "") + ".html");
         focusTreeMemberByCurrentHash();
     });
 });

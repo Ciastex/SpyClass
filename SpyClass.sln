@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyClass", "SpyClass\SpyClass.csproj", "{CABB262D-E29A-4459-AE4E-AE69DA7C9EB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyGlass.CommandLine", "SpyGlass.CommandLine\SpyGlass.CommandLine.csproj", "{C42995F0-E444-4904-AA44-A979F50C5A89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyClass.CommandLine", "SpyClass.CommandLine\SpyClass.CommandLine.csproj", "{C42995F0-E444-4904-AA44-A979F50C5A89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

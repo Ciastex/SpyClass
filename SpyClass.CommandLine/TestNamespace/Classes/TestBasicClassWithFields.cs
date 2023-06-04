@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices;
 
-namespace SpyGlass.CommandLine.TestNamespace.Classes
+namespace SpyClass.CommandLine.TestNamespace.Classes
 {
     public enum ETest1
     {

@@ -8,22 +8,13 @@
 *
 *   Desc:   Treeitem widget that implements ARIA Authoring Practices
 *           for a tree being used as a file viewer
-*/
-
-/*
-*   @constructor
-*
-*   @desc
-*       Treeitem object for representing the state and user interactions for a
-*       treeItem widget
-*
-*   @param node
-*       An element with the role=tree attribute
+* 
+* Changes:
+* - removed keyboard input support
+* - minor code cleanups
 */
 
 var TreeitemLink = function (node, treeObj, group) {
-
-  // Check whether node is a DOM element
   if (typeof node !== 'object') {
     return;
   }
@@ -41,17 +32,13 @@ var TreeitemLink = function (node, treeObj, group) {
 
   this.isExpandable = false;
   this.isVisible = false;
-  this.inGroup = false;
-
-  if (group) {
-    this.inGroup = true;
-  }
+  this.inGroup = !!group;
 
   var elem = node.firstElementChild;
 
   while (elem) {
 
-    if (elem.tagName.toLowerCase() == 'ul') {
+    if (elem.tagName.toLowerCase() === 'ul') {
       elem.setAttribute('role', 'group');
       this.isExpandable = true;
       break;
@@ -59,19 +46,6 @@ var TreeitemLink = function (node, treeObj, group) {
 
     elem = elem.nextElementSibling;
   }
-
-  this.keyCode = Object.freeze({
-    RETURN: 13,
-    SPACE: 32,
-    PAGEUP: 33,
-    PAGEDOWN: 34,
-    END: 35,
-    HOME: 36,
-    LEFT: 37,
-    UP: 38,
-    RIGHT: 39,
-    DOWN: 40
-  });
 };
 
 TreeitemLink.prototype.init = function () {
@@ -81,7 +55,6 @@ TreeitemLink.prototype.init = function () {
     this.domNode.setAttribute('role', 'treeitem');
   }
 
-  this.domNode.addEventListener('keydown', this.handleKeydown.bind(this));
   this.domNode.addEventListener('click', this.handleClick.bind(this));
   this.domNode.addEventListener('focus', this.handleFocus.bind(this));
   this.domNode.addEventListener('blur', this.handleBlur.bind(this));
@@ -106,129 +79,7 @@ TreeitemLink.prototype.isExpanded = function () {
 
 };
 
-/* EVENT HANDLERS */
-
-TreeitemLink.prototype.handleKeydown = function (event) {
-  var tgt = event.currentTarget,
-    flag = false,
-    char = event.key,
-    clickEvent;
-
-  function isPrintableCharacter (str) {
-    return str.length === 1 && str.match(/\S/);
-  }
-
-  function printableCharacter (item) {
-    if (char == '*') {
-      item.tree.expandAllSiblingItems(item);
-      flag = true;
-    }
-    else {
-      if (isPrintableCharacter(char)) {
-        item.tree.setFocusByFirstCharacter(item, char);
-        flag = true;
-      }
-    }
-  }
-
-  this.stopDefaultClick = false;
-
-  if (event.altKey || event.ctrlKey || event.metaKey) {
-    return;
-  }
-
-  if (event.shift) {
-    if (event.keyCode == this.keyCode.SPACE || event.keyCode == this.keyCode.RETURN) {
-      event.stopPropagation();
-      this.stopDefaultClick = true;
-    }
-    else {
-      if (isPrintableCharacter(char)) {
-        printableCharacter(this);
-      }
-    }
-  }
-  else {
-    switch (event.keyCode) {
-      case this.keyCode.SPACE:
-      case this.keyCode.RETURN:
-        if (this.isExpandable) {
-          if (this.isExpanded()) {
-            this.tree.collapseTreeitem(this);
-          }
-          else {
-            this.tree.expandTreeitem(this);
-          }
-          flag = true;
-        }
-        else {
-          event.stopPropagation();
-          this.stopDefaultClick = true;
-        }
-        break;
-
-      case this.keyCode.UP:
-        this.tree.setFocusToPreviousItem(this);
-        flag = true;
-        break;
-
-      case this.keyCode.DOWN:
-        this.tree.setFocusToNextItem(this);
-        flag = true;
-        break;
-
-      case this.keyCode.RIGHT:
-        if (this.isExpandable) {
-          if (this.isExpanded()) {
-            this.tree.setFocusToNextItem(this);
-          }
-          else {
-            this.tree.expandTreeitem(this);
-          }
-        }
-        flag = true;
-        break;
-
-      case this.keyCode.LEFT:
-        if (this.isExpandable && this.isExpanded()) {
-          this.tree.collapseTreeitem(this);
-          flag = true;
-        }
-        else {
-          if (this.inGroup) {
-            this.tree.setFocusToParentItem(this);
-            flag = true;
-          }
-        }
-        break;
-
-      case this.keyCode.HOME:
-        this.tree.setFocusToFirstItem();
-        flag = true;
-        break;
-
-      case this.keyCode.END:
-        this.tree.setFocusToLastItem();
-        flag = true;
-        break;
-
-      default:
-        if (isPrintableCharacter(char)) {
-          printableCharacter(this);
-        }
-        break;
-    }
-  }
-
-  if (flag) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-};
-
 TreeitemLink.prototype.handleClick = function (event) {
-
-  // only process click events that directly happened on this treeitem
   if (event.target !== this.domNode && event.target !== this.domNode.firstElementChild) {
     return;
   }

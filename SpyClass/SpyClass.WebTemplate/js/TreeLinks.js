@@ -14,8 +14,6 @@
  * @desc  after page has loaded initialize all treeitems based on the role=treeitem
  */
 
-var allTrees = [];
-
  window.addEventListener('load', function () {
 
     var trees = document.querySelectorAll('[role="tree"]');
@@ -23,7 +21,6 @@ var allTrees = [];
     for (var i = 0; i < trees.length; i++) {
       var t = new TreeLinks(trees[i]);
       t.init();
-      allTrees.push(t);
     }
   
   });
@@ -106,60 +103,6 @@ var allTrees = [];
       }
     }
   
-  };
-  
-  TreeLinks.prototype.setFocusToNextItem = function (currentItem) {
-  
-    var nextItem = false;
-  
-    for (var i = (this.treeitems.length - 1); i >= 0; i--) {
-      var ti = this.treeitems[i];
-      if (ti === currentItem) {
-        break;
-      }
-      if (ti.isVisible) {
-        nextItem = ti;
-      }
-    }
-  
-    if (nextItem) {
-      this.setFocusToItem(nextItem);
-    }
-  
-  };
-  
-  TreeLinks.prototype.setFocusToPreviousItem = function (currentItem) {
-  
-    var prevItem = false;
-  
-    for (var i = 0; i < this.treeitems.length; i++) {
-      var ti = this.treeitems[i];
-      if (ti === currentItem) {
-        break;
-      }
-      if (ti.isVisible) {
-        prevItem = ti;
-      }
-    }
-  
-    if (prevItem) {
-      this.setFocusToItem(prevItem);
-    }
-  };
-  
-  TreeLinks.prototype.setFocusToParentItem = function (currentItem) {
-  
-    if (currentItem.groupTreeitem) {
-      this.setFocusToItem(currentItem.groupTreeitem);
-    }
-  };
-  
-  TreeLinks.prototype.setFocusToFirstItem = function () {
-    this.setFocusToItem(this.firstTreeitem);
-  };
-  
-  TreeLinks.prototype.setFocusToLastItem = function () {
-    this.setFocusToItem(this.lastTreeitem);
   };
   
   TreeLinks.prototype.expandTreeitem = function (currentItem) {
